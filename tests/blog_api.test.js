@@ -113,6 +113,16 @@ test('Url missing', async () => {
     expect(response.body.length).toBe(2)
 })
 
+test('Delete a blog', async () => {
+    const blogs = await Blog.find({})
+    const idToDelete = blogs[0].id
+    await api
+        .delete('/api/blogs/' + idToDelete)
+        .expect(200)
+    const response = await api.get('/api/blogs')
+    expect(response.body.length).toBe(1)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
