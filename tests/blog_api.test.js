@@ -79,6 +79,40 @@ test('Likes default to 0', async () => {
     expect(response.body[2].likes).toBe(0)
 })
 
+test('Title missing', async () => {
+    const blogTitleMissing = 
+        {
+            author: "jaska",
+            url: "jiwojsiowa",
+            likes: 105
+        }
+    
+    await api
+        .post('/api/blogs')
+        .send(blogTitleMissing)
+        .expect(400)
+    
+    const response = await api.get('/api/blogs')
+    expect(response.body.length).toBe(2)
+})
+
+test('Url missing', async () => {
+    const blogTitleMissing = 
+        {
+            title: "jooo",
+            author: "jaskassq",
+            likes: 10598
+        }
+    
+    await api
+        .post('/api/blogs')
+        .send(blogTitleMissing)
+        .expect(400)
+    
+    const response = await api.get('/api/blogs')
+    expect(response.body.length).toBe(2)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
