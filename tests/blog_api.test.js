@@ -20,6 +20,15 @@ const initialBlogs = [
     }
 ]
 
+const blogToBeAdded = 
+    {
+        title: "kolmas kirja",
+        author: "jokunen",
+        url: "asdfghjklö",
+        likes: 1035
+    }
+
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     let blogObject = new Blog(initialBlogs[0])
@@ -43,6 +52,13 @@ test('blogs are returned as json', async () => {
 test('identifier is id', async () => {
     const blogs = await Blog.find({})
     expect(blogs[0].id).toBeDefined()
+})
+
+test('Can post', async () => {
+    let blogToSave = new Blog(blogToBeAdded)
+    await blogToSave.save()
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(3)
 })
 
 afterAll(async () => {
