@@ -28,6 +28,13 @@ const blogToBeAdded =
         likes: 1035
     }
 
+const blogWithoutLikes = 
+    {
+        title: "No likes",
+        author: "yeuiqyeuwqyei",
+        url: "yyyyyyyyyyy"
+    }
+
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -55,10 +62,21 @@ test('identifier is id', async () => {
 })
 
 test('Can post', async () => {
-    let blogToSave = new Blog(blogToBeAdded)
-    await blogToSave.save()
+    await api
+        .post('/api/blogs')
+        .send(blogToBeAdded)
+        .expect(200)
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(3)
+})
+
+test('Likes default to 0', async () => {
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutLikes)
+        .expect(200)
+    const response = await api.get('/api/blogs')
+    expect(response.body[2].likes).toBe(0)
 })
 
 afterAll(async () => {
