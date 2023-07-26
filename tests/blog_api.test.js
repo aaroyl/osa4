@@ -118,9 +118,28 @@ test('Delete a blog', async () => {
     const idToDelete = blogs[0].id
     await api
         .delete('/api/blogs/' + idToDelete)
-        .expect(200)
+        .expect(204)
     const response = await api.get('/api/blogs')
     expect(response.body.length).toBe(1)
+})
+
+test('Update blog', async () => {
+    const updatedBlog = 
+        {
+            title: "jooo",
+            author: "jaskassq",
+            url: "jiwojsiowa",
+            likes: 2
+        }
+    const blogs = await Blog.find({})
+    expect(blogs[0].likes).toBe(10)
+    const idToUpdate = blogs[0].id
+    await api
+        .put('/api/blogs/' + idToUpdate)
+        .send(updatedBlog)
+        .expect(200)
+    const response = await api.get('/api/blogs')
+    expect(response.body.find(blog => blog.title === "jooo").likes).toBe(2)
 })
 
 afterAll(async () => {
