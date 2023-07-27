@@ -43,12 +43,23 @@ blogRouter.post('/', async (request, response, next) => {
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
-    try{
-        await Blog.findByIdAndRemove(request.params.id)
-        response.status(204).end()
-    }catch(exception){
-        next(exception)
+    const token = request.token
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    const user = await User.findById(decodedToken.id)
+    const blogToDelete = await Blog.findById(request.params.id)
+    if(blogToDelete.user._id.toString() === user._id.toString()){
+        try{
+            await Blog.findByIdAndRemove(request.params.id)
+            response.status(204).end()
+        }catch(exception){
+            next(exception)
+        }
+    }else{
+        return response.status(401).json({error: 'no access'})
     }
+
+   
 })
 
 blogRouter.put('/:id', async (request, response, next) => {
